@@ -15,7 +15,9 @@ class SearchContactsUseCase @Inject constructor(
                 contacts
             } else {
                 contacts.filter { contact ->
-                    contact.doesMatchSearchQuery(query)
+                    contact.matchesQuery(query)
+                }.sortedByDescending { contact ->
+                    contact.searchScore(query)
                 }
             }
         }

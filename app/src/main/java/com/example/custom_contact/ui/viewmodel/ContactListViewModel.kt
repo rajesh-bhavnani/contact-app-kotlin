@@ -7,9 +7,12 @@ import com.example.custom_contact.domain.usecase.AddContactUseCase
 import com.example.custom_contact.domain.usecase.GetContactsUseCase
 import com.example.custom_contact.domain.usecase.SearchContactsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -25,7 +28,9 @@ class ContactListViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val contacts: StateFlow<List<Contact>> = _searchQuery
+        .debounce(300)
         .flatMapLatest { query ->
             if (query.isEmpty()) {
                 getContactsUseCase()

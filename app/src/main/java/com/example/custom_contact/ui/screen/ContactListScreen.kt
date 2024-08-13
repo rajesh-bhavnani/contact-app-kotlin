@@ -58,20 +58,38 @@ fun ContactListScreen(
                     .padding(16.dp)
             )
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(
-                    items = contacts,
-                    key = { contact -> contact.id }
-                ) { contact ->
-                    ContactListItem(
-                        contact = contact,
-                        onContactClick = { onContactClick(contact.id) }
-                    )
+            if (contacts.isEmpty() && searchQuery.isNotEmpty()) {
+                NoResultsMessage(searchQuery)
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(
+                        items = contacts,
+                        key = { contact -> contact.id }
+                    ) { contact ->
+                        ContactListItem(
+                            contact = contact,
+                            onContactClick = { onContactClick(contact.id) }
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun NoResultsMessage(query: String) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "No results found for '$query'",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
